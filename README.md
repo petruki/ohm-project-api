@@ -10,3 +10,19 @@
     }
 }
 ```
+
+# Resouces
+
+**FindAll** - GET https://ohm-project-api.herokuapp.com/api/project
+
+**Paramters**
+> ?perpage=20 - Limit 20 entries per page
+> ?page=1 - Set page 1
+
+**Find** - GET https://ohm-project-api.herokuapp.com/api/project/find
+
+**Paramters**
+> ?q=procrasti - Find projects containing 'procasrti' on its name
+> ?mood=aggressive - Find aggressive projects
+> ?perpage=20 - Limit 20 entries per page
+> ?page=1 - Set to page 1

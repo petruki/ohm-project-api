@@ -26,7 +26,7 @@ router.get('/find', async (req, res) => {
             moods: { $regex: new RegExp(`.*${mood}.*`, "i") } })
             .sort({ project: 1 })
             .skip((page - 1) * pageLimit)
-            .limit(pageLimit);
+            .limit(pageLimit <= 50 ? pageLimit : 50);
 
         const total = await Project.find({ 
                 project: { $regex: new RegExp(`.*${query}.*`, "i") },
@@ -59,7 +59,7 @@ router.get('/', async (req, res) => {
         const projects = await Project.find()
             .sort({ created: 1 })
             .skip((page - 1) * pageLimit)
-            .limit(pageLimit);
+            .limit(pageLimit <= 50 ? pageLimit : 50);
 
         const total = await Project.countDocuments();
 
