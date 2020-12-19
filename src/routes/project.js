@@ -18,20 +18,26 @@ router.get('/find', async (req, res) => {
     try {
         const pageLimit = parseInt(req.query.perpage || 10);
         const page = parseInt(req.query.page || 1);
-        const query = req.query.q || '';
-        const mood = req.query.mood || '';
+
+        const args = {};
+        if (req.query.q) {
+            args.project = { $regex: new RegExp(`.*${req.query.q}.*`, "i") };
+        } else if (req.query.mood) {
+            args.moods = { $regex: new RegExp(`.*${req.query.mood}.*`, "i") };
+        } else if (req.query.style) {
+            args.styles = { $regex: new RegExp(`.*${req.query.style}.*`, "i") };
+        } else if (req.query.collab) {
+            args.contributors = { $regex: new RegExp(`.*${req.query.collab}.*`, "i") };
+        } else if (req.query.admin) {
+            args.admins = { $regex: new RegExp(`.*${req.query.admin}.*`, "i") };
+        }
         
-        let projects = await Project.find({ 
-            project: { $regex: new RegExp(`.*${query}.*`, "i") },
-            moods: { $regex: new RegExp(`.*${mood}.*`, "i") } })
+        let projects = await Project.find(args)
             .sort({ project: 1 })
             .skip((page - 1) * pageLimit)
             .limit(pageLimit <= 50 ? pageLimit : 50);
 
-        const total = await Project.find({ 
-                project: { $regex: new RegExp(`.*${query}.*`, "i") },
-                moods: { $regex: new RegExp(`.*${mood}.*`, "i") } }).count();
-
+        const total = await Project.find(args).countDocuments();
         const meta = {
             total,
             pages: Math.ceil(total / pageLimit)

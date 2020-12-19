@@ -33,7 +33,10 @@ const projectSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    moods: [{}]
+    moods: [{}],
+    styles: [{}],
+    admins: [{}],
+    contributors: [{}]
 });
 
 const Project = mongoose.model('Project', projectSchema);
