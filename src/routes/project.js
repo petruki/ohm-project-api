@@ -1,5 +1,7 @@
 const express = require("express");
 const Project = require("../models/project");
+const { fetchPage } = require('../utils/project-sync');
+const { escapeRegExp } = require('../utils');
 
 const router = express.Router();
 
@@ -21,15 +23,15 @@ router.get('/find', async (req, res) => {
 
         const args = {};
         if (req.query.q) {
-            args.project = { $regex: new RegExp(`.*${req.query.q}.*`, "i") };
+            args.project = { $regex: new RegExp(`.*${escapeRegExp(req.query.q)}.*`, "i") };
         } else if (req.query.mood) {
-            args.moods = { $regex: new RegExp(`.*${req.query.mood}.*`, "i") };
+            args.moods = { $regex: new RegExp(`.*${escapeRegExp(req.query.mood)}.*`, "i") };
         } else if (req.query.style) {
-            args.styles = { $regex: new RegExp(`.*${req.query.style}.*`, "i") };
+            args.styles = { $regex: new RegExp(`.*${escapeRegExp(req.query.style)}.*`, "i") };
         } else if (req.query.collab) {
-            args.contributors = { $regex: new RegExp(`.*${req.query.collab}.*`, "i") };
+            args.contributors = { $regex: new RegExp(`.*${escapeRegExp(req.query.collab)}.*`, "i") };
         } else if (req.query.admin) {
-            args.admins = { $regex: new RegExp(`.*${req.query.admin}.*`, "i") };
+            args.admins = { $regex: new RegExp(`.*${escapeRegExp(req.query.admin)}.*`, "i") };
         }
         
         let projects = await Project.find(args)
@@ -45,6 +47,7 @@ router.get('/find', async (req, res) => {
 
         res.send({ meta, data: projects });
     } catch (e) {
+        console.log(e)
         res.status(500).send({ error: e.message });
     }
 });
@@ -83,6 +86,29 @@ router.get('/', async (req, res) => {
 router.get('/count', async (req, res) => {
     const total = await Project.countDocuments();
     res.send({ total });
+});
+
+router.patch('/sync/:id', async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.id);
+        
+        if (project) {
+            fetchPage(project.page).then(async (data) => {
+                project.last_scrap = Date.now();
+                project.admins = data.admins;
+                project.contributors = data.contributors;
+                project.comments = data.comments;
+                project.styles = data.styles;
+                project.moods = data.moods;
+                project.description = data.description;
+                await project.save();
+            });
+        }
+        
+        return res.status(200).send({ message: 'Project synced' });
+    } catch (e) {
+        res.status(500).send({ error: e.message });
+    }
 });
 
 module.exports = router;

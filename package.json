@@ -10,10 +10,12 @@
     "prod": "env-cmd -e prod nodemon ./src/index.js"
   },
   "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "helmet": "^4.2.0",
-    "mongoose": "^5.10.11"
+    "mongoose": "^5.10.11",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.6",

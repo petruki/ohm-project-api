@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const projectSchema = new mongoose.Schema({
+    last_scrap: {
+        type: Number,
+        default: 0
+    },
     url: {
         type: String,
         trim: true
@@ -36,7 +40,18 @@ const projectSchema = new mongoose.Schema({
     moods: [{}],
     styles: [{}],
     admins: [{}],
-    contributors: [{}]
+    contributors: [{}],
+    comments: [{
+        author: {
+            type: String
+        },
+        date: {
+            type: String
+        },
+        content: {
+            type: String
+        }
+    }]
 });
 
 const Project = mongoose.model('Project', projectSchema);
