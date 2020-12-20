@@ -36,6 +36,10 @@ function scrapPage(data) {
         if (comment.author) {
             comment.date = elem.parent.children[3].children[3].children[1].children[0].data.trim();
             comment.content = elem.parent.children[3].children[7].children[0].data.trim();
+
+            if (!comment.content && elem.parent.children[3].children[7].children[0].next)
+                comment.content = elem.parent.children[3].children[7].children[0].next.children[0].data.trim();
+                
             result.comments.push(comment);
         }
     });
