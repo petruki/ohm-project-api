@@ -93,7 +93,7 @@ router.patch('/sync/:id', async (req, res) => {
         const project = await Project.findById(req.params.id);
         
         if (project) {
-            fetchPage(project.page).then(async (data) => {
+            await fetchPage(project.page).then(async (data) => {
                 project.last_scrap = Date.now();
                 project.admins = data.admins;
                 project.contributors = data.contributors;
@@ -103,9 +103,11 @@ router.patch('/sync/:id', async (req, res) => {
                 project.description = data.description;
                 await project.save();
             });
+        } else {
+            return res.status(404);
         }
         
-        return res.status(200).send({ message: 'Project synced' });
+        return res.status(200).send(project);
     } catch (e) {
         res.status(500).send({ error: e.message });
     }
