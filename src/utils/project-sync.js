@@ -81,12 +81,12 @@ function scrapPage(data) {
     return result;
 }
 
-function fetchPage(page) {
+function fetchPage(page, cookieEntry) {
     const defaultOptions = {
         url: `http://www.ohmstudio.com${page}`,
         headers: {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:34.0) Gecko/20100101 Firefox/34.0',
-            Cookie: process.env.COOKIE
+            Cookie: cookieEntry
         }
     };
 

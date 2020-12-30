@@ -93,7 +93,7 @@ router.patch('/sync/:id', async (req, res) => {
         const project = await Project.findById(req.params.id);
         
         if (project) {
-            await fetchPage(project.page).then(async (data) => {
+            await fetchPage(project.page, req.body.cookie).then(async (data) => {
                 project.last_scrap = Date.now();
                 project.admins = data.admins;
                 project.contributors = data.contributors;
