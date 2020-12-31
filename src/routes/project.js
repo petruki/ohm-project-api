@@ -90,17 +90,12 @@ router.get('/count', async (req, res) => {
 
 router.patch('/sync/:id', async (req, res) => {
     try {
-        const project = await Project.findById(req.params.id);
+        let project = await Project.findById(req.params.id);
         
         if (project) {
             await fetchPage(project.page, req.body.cookie).then(async (data) => {
+                Object.keys(data).forEach((key) => project[key] = data[key]);
                 project.last_scrap = Date.now();
-                project.admins = data.admins;
-                project.contributors = data.contributors;
-                project.comments = data.comments;
-                project.styles = data.styles;
-                project.moods = data.moods;
-                project.description = data.description;
                 await project.save();
             });
         } else {
